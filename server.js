@@ -12,6 +12,9 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
+//serve static files.
+app.use(express.static("public"));
+
 function filterByQuery(query, animalsArray) {
   let personalityTraitsArray = [];
   // Note that we save the animalsArray as filteredResults here:
@@ -76,30 +79,47 @@ app.get("/api/animals", (req, res) => {
     results = filterByQuery(req.query, results);
   }
   res.json(results);
+
+  app.get("/api/animals/:id", (req, res) => {
+    const result = findById(req.params.id, animals);
+    if (result) {
+      res.json(result);
+    } else {
+      res.send(404);
+    }
+  });
+  app.post("/api/animals", (req, res) => {
+    // set id based on what the next index of the array will be
+    req.body.id = animals.length.toString();
+
+    // if any data in req.body is incorrect, send 400 error back
+    if (!validateAnimal(req.body)) {
+      res.status(400).send("The animal is not properly formatted.");
+    } else {
+      const animal = createNewAnimal(req.body, animals);
+      res.json(animal);
+    }
+  });
 });
+//note that "/" brings us to the root route of the server which is used to create the homepage for a server.
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+//route for the animals.html.
+app.get("/animals", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/animals.html"));
+});
+//route for the zookeepers.html.
+app.get("/zookeepers", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/zookeepers.html"));
+});
+//wild card route to catch invalid route requests.  Note that this route should ALWAYS come last.
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+//app.listen function.
 app.listen(PORT, () => {
   console.log(`API server now on port ${PORT}!`);
-});
-app.get("/api/animals/:id", (req, res) => {
-  const result = findById(req.params.id, animals);
-  if (result) {
-    res.json(result);
-  } else {
-    res.send(404);
-  }
-});
-//POST routes.
-app.post("/api/animals", (req, res) => {
-  // set id based on what the next index of the array will be
-  req.body.id = animals.length.toString();
-
-  // if any data in req.body is incorrect, send 400 error back
-  if (!validateAnimal(req.body)) {
-    res.status(400).send("The animal is not properly formatted.");
-  } else {
-    const animal = createNewAnimal(req.body, animals);
-    res.json(animal);
-  }
 });
 //Validation.
 function validateAnimal(animal) {
