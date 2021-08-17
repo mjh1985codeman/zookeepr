@@ -117,7 +117,31 @@
         "hungry"
       ],
       "id": "11"
+    },
+    {
+      "name": "Larry",
+      "species": "Lemur",
+      "diet": "omnivore",
+      "personalityTraits": [],
+      "id": "12"
+    },
+    {
+      "name": "Timmy",
+      "species": "Gorilla",
+      "diet": "omnivore",
+      "personalityTraits": [
+        "hungry"
+      ],
+      "id": "13"
+    },
+    {
+      "name": "Fuzzy",
+      "species": "Bear",
+      "diet": "carnivore",
+      "personalityTraits": [
+        "hungry"
+      ],
+      "id": "14"
     }
-  
   ]
 }
